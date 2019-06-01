@@ -36,7 +36,11 @@ function jobsToPairs(jobsList) {
   let pairs = [];
 
   for (let i = 0; i < lines.length; i++) {
-    pairs.push(lines[i].split(/ => ?/));
+    let pair = lines[i].split(/ => ?/);
+    if (pair[0] === pair[1]) {
+      throw new Error("Cyclic Dependency Detected");
+    }
+    pairs.push(pair);
   }
 
   return pairs;
