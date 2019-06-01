@@ -37,3 +37,11 @@ f =>`);
   expect(result.indexOf("b")).toBeLessThan(result.indexOf("e"));
   expect(result.indexOf("a")).toBeLessThan(result.indexOf("d"));
 });
+
+test("An error should be thrown when a job depends upon itself", () => {
+  expect(() => {
+    exercise(`a =>
+b =>
+c => c`);
+  }).toThrow("Cyclic Dependency Detected");
+});
