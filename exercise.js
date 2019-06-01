@@ -28,6 +28,10 @@ function jobs(jobsList) {
     }
   }
 
+  if (sorted.length !== pairs.length) {
+    throw new Error("Circular Dependency Detected");
+  }
+
   return sorted.reverse();
 }
 
