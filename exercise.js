@@ -2,7 +2,14 @@ function jobs(a) {
   if (!a) {
     return [];
   }
-  return a;
+
+  let tempArr = a.split("\n");
+  let result = [];
+  for (let i = 0; i < tempArr.length; i++) {
+    result.push(tempArr[i][0]);
+  }
+
+  return result;
 }
 
 module.exports = jobs;
