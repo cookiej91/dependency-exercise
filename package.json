@@ -1,0 +1,9 @@
+{
+  "name": "dependency-exercise",
+  "jest": {
+    "verbose": true
+  },
+  "dependencies": {
+    "jest": "^24.8.0"
+  }
+}
