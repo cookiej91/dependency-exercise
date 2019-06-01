@@ -45,3 +45,14 @@ b =>
 c => c`);
   }).toThrow("Cyclic Dependency Detected");
 });
+
+test("An error should be thrown when a circular dependency is found", () => {
+  expect(() => {
+    exercise(`a =>
+b => c
+c => f
+d => a
+e =>
+f => b`);
+  }).toThrow("Circular Dependency Detected");
+});
