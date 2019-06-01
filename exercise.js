@@ -1,3 +1,31 @@
+function jobsToPairs(jobsList) {
+  let lines = jobsList.split("\n");
+  let pairs = [];
+
+  for (let i = 0; i < lines.length; i++) {
+    let pair = lines[i].split(/ => ?/);
+    if (pair[0] === pair[1]) {
+      throw new Error("Cyclic Dependency Detected");
+    }
+    pairs.push(pair);
+  }
+
+  return pairs;
+}
+
+function findJobsWithoutDependents(pairs) {
+  // pairs [["a", "b"], ["b", "c"]] etc
+
+  return pairs
+    .filter(currentJob => {
+      const hasDependents = pairs.some(
+        otherJob => otherJob[1] === currentJob[0]
+      );
+      return !hasDependents;
+    })
+    .map(pair => pair[0]);
+}
+
 function jobs(jobsList) {
   if (!jobsList) {
     return [];
@@ -33,40 +61,6 @@ function jobs(jobsList) {
   }
 
   return sorted.reverse();
-}
-
-function jobsToPairs(jobsList) {
-  let lines = jobsList.split("\n");
-  let pairs = [];
-
-  for (let i = 0; i < lines.length; i++) {
-    let pair = lines[i].split(/ => ?/);
-    if (pair[0] === pair[1]) {
-      throw new Error("Cyclic Dependency Detected");
-    }
-    pairs.push(pair);
-  }
-
-  return pairs;
-}
-
-function findJobsWithoutDependents(pairs) {
-  // pairs [["a", "b"], ["b", "c"]] etc
-  let withoutDependents = [];
-
-  for (let i = 0; i < pairs.length; i++) {
-    let jobName = pairs[i][0];
-
-    // Check if any other jobs depend on the current job
-    let hasDependents = pairs.some(job => job[1] === jobName);
-
-    // We only want jobs which have nothing depending on them.
-    if (!hasDependents) {
-      withoutDependents.push(jobName);
-    }
-  }
-
-  return withoutDependents;
 }
 
 module.exports = jobs;
