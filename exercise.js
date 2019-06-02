@@ -1,31 +1,53 @@
+/**
+ * Convert a list of jobs to an array of pairs.
+ *
+ * @param {String} jobsList a list of jobs to convert to pairs
+ * @returns {Array} pairs for the jobs that were passed in
+ */
 function jobsToPairs(jobsList) {
-  let lines = jobsList.split("\n");
+  const lines = jobsList.split("\n");
   let pairs = [];
 
   for (let i = 0; i < lines.length; i++) {
-    let pair = lines[i].split(/ => ?/);
+    const pair = lines[i].split(/ => ?/);
+
     if (pair[0] === pair[1]) {
       throw new Error("Cyclic Dependency Detected");
     }
+
     pairs.push(pair);
   }
 
   return pairs;
 }
 
+/**
+ * Returns the jobs that have nothing depending on them
+ *
+ * @param {Array} pairs
+ * @returns {Array} mapped names
+ */
 function findJobsWithoutDependents(pairs) {
   // pairs [["a", "b"], ["b", "c"]] etc
 
+  // Check right side of pairs against current left side
   return pairs
     .filter(currentJob => {
       const hasDependents = pairs.some(
         otherJob => otherJob[1] === currentJob[0]
       );
+
       return !hasDependents;
     })
     .map(pair => pair[0]);
 }
 
+/**
+ * Returns a sorted array of jobs based on their dependents
+ *
+ * @param {String} jobsList
+ * @returns {Array} sorted list
+ */
 function jobs(jobsList) {
   if (!jobsList) {
     return [];
@@ -33,29 +55,31 @@ function jobs(jobsList) {
 
   const pairs = jobsToPairs(jobsList);
 
-  // L ← Empty list that will contain the sorted elements
+  // sorted is an empty array that will contain the sorted elements
   let sorted = [];
 
-  // S ← Set of all nodes with no incoming edge
-  let queue = findJobsWithoutDependents(pairs);
+  // Queue is set of all nodes with no incoming edge
+  const queue = findJobsWithoutDependents(pairs);
 
-  // while S is non-empty do
-  while (queue.length !== 0) {
-    // remove a node n from S
-    let jobName = queue.pop();
+  // while the queue is not empty
+  while (queue.length > 0) {
+    // remove a job from the queue
+    const jobName = queue.pop();
 
-    // add n to tail of L
+    // and add the job to tail of the sorted array
     sorted.push(jobName);
 
-    let job = pairs.find(job => job[0] === jobName);
+    const job = pairs.find(job => job[0] === jobName);
 
-    // if node n has a dependency m
+    // if the job has a dependency
     if (job[1].length) {
-      // insert m into S
+      // insert the job into the queue
       queue.push(job[1]);
     }
   }
 
+  // If we have not received the same amount of jobs back as originally given
+  // we can assume that a circular reference has been found.
   if (sorted.length !== pairs.length) {
     throw new Error("Circular Dependency Detected");
   }
